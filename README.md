@@ -45,6 +45,36 @@ Welcome to **Moizy Open Source Issues**, a developer-friendly hub where you can 
 
 ---
 
+## Available Utilities
+
+### Sensitive Data Masking
+
+Use `utils/maskSensitiveData.js` to create a safe copy of data before logging.
+It masks common sensitive fields such as `password`, `token`, `accessToken`,
+`refreshToken`, `secret`, `apiKey`, and `creditCard`.
+
+```js
+const maskSensitiveData = require('./utils/maskSensitiveData');
+
+const user = {
+  email: 'john@example.com',
+  password: 'secret123'
+};
+
+const safeUser = maskSensitiveData(user);
+
+console.log(safeUser);
+// { email: 'john@example.com', password: '********' }
+```
+
+Custom fields can be added when needed:
+
+```js
+maskSensitiveData(user, ['salary', 'nationalId']);
+```
+
+---
+
 ✅ Issue Guidelines
 
 - Only pick one issue at a time.
