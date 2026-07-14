@@ -1,7 +1,7 @@
 // src/services/apiServices.js
-import { NetworkError, ServerError, handleError } from "../utils/errorHandler";
+const { NetworkError, ServerError, handleError } = require("../utils/errorHandler");
 
-export const fetchData = async (url) => {
+const fetchData = async (url) => {
     try {
         const response = await fetch(url);
 
@@ -21,3 +21,5 @@ export const fetchData = async (url) => {
         }
     }
 };
+
+module.exports = fetchData;

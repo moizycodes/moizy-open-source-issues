@@ -6,7 +6,7 @@
  * (or through any bundler / test runner that supports ES modules)
  */
 
-import { validate } from '../utils/validate.js';
+const validate = require('../utils/validate.js');
 
 // ---------------------------------------------------------------------------
 // Minimal test runner

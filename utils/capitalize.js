@@ -17,7 +17,7 @@
  * capitalize("");           // ""
  * capitalize("A");          // "A"
  */
-export function capitalize(str) {
+function capitalize(str) {
   // Handle non-string input gracefully
   if (typeof str !== "string") {
     throw new TypeError(`capitalize() expects a string, got ${typeof str}`);
@@ -29,3 +29,5 @@ export function capitalize(str) {
   // Uppercase first character, leave the rest unchanged
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+module.exports = capitalize;

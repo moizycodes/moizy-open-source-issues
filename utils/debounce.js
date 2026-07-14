@@ -6,7 +6,7 @@
  * since it was last called.
  */
 
-export function debounce(fn, delay) {
+function debounce(fn, delay) {
   let timer;
 
   return function (...args) {
@@ -19,3 +19,5 @@ export function debounce(fn, delay) {
     }, delay);
   };
 }
+
+module.exports = debounce;

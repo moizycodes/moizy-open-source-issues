@@ -8,7 +8,7 @@ const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/
  * @param {any} value 
  * @returns {object}
  */
-export const validateRequired = (value) => {
+const validateRequired = (value) => {
   if (value === null || value === undefined || value === '') {
     return {
       valid: false,
@@ -35,7 +35,7 @@ export const validateRequired = (value) => {
  * @returns {object}
  */
 
-export const validateEmail = (email) => {
+const validateEmail = (email) => {
   if (!EMAIL_REGEX.test(email)) {
     return {
       valid: false,
@@ -57,7 +57,7 @@ export const validateEmail = (email) => {
  */
 
 
-export const validatePassword = (password) => {
+const validatePassword = (password) => {
   if (!PASSWORD_REGEX.test(password)) {
     return {
       valid: false,
@@ -76,7 +76,7 @@ export const validatePassword = (password) => {
  * @returns 
  */
 
-export const validateNumber = (value) => {
+const validateNumber = (value) => {
   if (isNaN(Number(value))) {
     return { valid: false, message: 'Please enter a valid number.' };
   }
@@ -102,7 +102,7 @@ const ruleRegistry = {
  * @returns {object}
  */
 
-export const validateField = (value, rules = []) => {
+const validateField = (value, rules = []) => {
   for (const rule of rules) {
     let ruleName = rule;
     
@@ -127,14 +127,14 @@ export const validateField = (value, rules = []) => {
 
 // Validation utility functions
 
-export const validateRequired = (value) => {
+const validateRequired = (value) => {
   if (!value || value.trim() === "") {
     return { valid: false, message: "This field is required" };
   }
   return { valid: true, message: "" };
 };
 
-export const validateEmail = (value) => {
+const validateEmail = (value) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(value)) {
     return { valid: false, message: "Invalid email format" };
@@ -142,7 +142,7 @@ export const validateEmail = (value) => {
   return { valid: true, message: "" };
 };
 
-export const validatePassword = (value) => {
+const validatePassword = (value) => {
   if (value.length < 8) {
     return {
       valid: false,
@@ -176,14 +176,14 @@ export const validatePassword = (value) => {
   return { valid: true, message: "" };
 };
 
-export const validateNumber = (value) => {
+const validateNumber = (value) => {
   if (isNaN(value) || value === "") {
     return { valid: false, message: "Must be a valid number" };
   }
   return { valid: true, message: "" };
 };
 
-export const validateField = (value, rules) => {
+const validateField = (value, rules) => {
   for (const rule of rules) {
     const result = rule(value);
     if (!result.valid) {
@@ -193,3 +193,6 @@ export const validateField = (value, rules) => {
   return { valid: true, message: "" };
 };
 // >>>>>>> main
+
+module.exports = {validateRequired, validateEmail, validatePassword, validateNumber, validateField, 
+                  validateRequired, validateEmail, validatePassword, validateNumber, validateField};

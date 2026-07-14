@@ -21,7 +21,7 @@
  * pipe(3, add, double); // throws TypeError: pipe: argument at index 0 is not a function, got number
  */
 
-export function pipe(...fns) {
+function pipe(...fns) {
   fns.forEach((f, i) => {
     if (typeof f !== "function")
       throw new TypeError(
@@ -34,7 +34,7 @@ export function pipe(...fns) {
   return (x) => fns.reduce((v, f) => f(v), x);
 }
 
-export function compose(...fns) {
+function compose(...fns) {
   fns.forEach((f, i) => {
     if (typeof f !== "function")
       throw new TypeError(
@@ -46,3 +46,5 @@ export function compose(...fns) {
 
   return (x) => fns.reduceRight((v, f) => f(v), x);
 }
+
+module.exports = {pipe, compose};

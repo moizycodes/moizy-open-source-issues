@@ -1,12 +1,11 @@
 /**
  * Tests for utils/functional.js
  *
- * Run with: node --experimental-vm-modules tests/functional.test.js
- * (or through any bundler / test runner that supports ES modules)
+ * Run with: node tests/functional.test.js
  */
 
-import { test, assertEquals, assertThrows, printSummary } from "./test-utils.js";
-import { pipe, compose } from "../utils/functional.js";
+const { test, assertEquals, assertThrows, printSummary } = require("./test-utils.js");
+const { pipe, compose } = require("../utils/functional.js");
 
 test("pipe should apply functions from left to right", () => {
   const add = (x) => x + 1;

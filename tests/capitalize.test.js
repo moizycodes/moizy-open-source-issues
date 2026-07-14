@@ -1,5 +1,8 @@
-import { test, assertEquals, assertThrows, printSummary } from "./test-utils.js";
-import { capitalize } from "../utils/capitalize.js";
+// import { test, assertEquals, assertThrows, printSummary } from "./test-utils.js";
+// import { capitalize } from "../utils/capitalize.js";
+
+const { test, assertEquals, assertThrows, printSummary } = require('./test-utils.js');
+const capitalize = require('../utils/capitalize.js');
 
 // Normal string
 test("capitalize normal string", () => {

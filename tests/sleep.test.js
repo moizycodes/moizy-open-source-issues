@@ -1,9 +1,9 @@
-import { sleep } from "../utils/sleep.js";
-import {
+const sleep = require("../utils/sleep.js");
+const {
   test,
   assertEquals,
   printSummary,
-} from "./test-utils.js";
+} = require("./test-utils.js");
 
 // Valid delay
 test("sleep resolves after delay", async () => {

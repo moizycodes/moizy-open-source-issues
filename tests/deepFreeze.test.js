@@ -1,5 +1,5 @@
-import { test, assertEquals, assert, printSummary } from './test-utils.js';
-import { deepFreeze } from '../utils/deepFreeze.js';
+const { test, assertEquals, assert, printSummary } = require('./test-utils.js');
+const { deepFreeze } = require('../utils/deepFreeze.js');
 
 // Basic nested object freeze
 test('deepFreeze freezes nested objects', () => {

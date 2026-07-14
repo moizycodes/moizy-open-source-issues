@@ -28,7 +28,7 @@
  *
  * data.users[0].name = 'Bob'; // fails silently in non-strict mode
  */
-export function deepFreeze(obj) {
+function deepFreeze(obj) {
   return _freeze(obj, new WeakSet());
 }
 
@@ -70,4 +70,4 @@ function _freeze(obj, seen) {
   return Object.freeze(obj);
 }
 
-
+module.exports = deepFreeze;

@@ -4,7 +4,7 @@
  * @returns {Function} - New function that executes func only on first call 
  */
 
-export function once(func) {
+function once(func) {
   // Track if the function has been called
   let called = false;
 
@@ -26,3 +26,5 @@ export function once(func) {
     return result;
   };
 }
+
+module.exports = once;
