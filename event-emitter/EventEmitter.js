@@ -15,7 +15,7 @@ class EventEmitter {
    */
   on(event, callback) {
     if (typeof callback !== 'function') {
-      throw new Error('Callback must be a function');
+      throw new TypeError('EventEmitter.on: callback must be a function');
     }
 
     if (!this.events.has(event)) {
@@ -74,7 +74,7 @@ class EventEmitter {
    */
   once(event, callback) {
     if (typeof callback !== 'function') {
-      throw new Error('Callback must be a function');
+      throw new TypeError('EventEmitter.once: callback must be a function');
     }
 
     const wrapper = (...args) => {

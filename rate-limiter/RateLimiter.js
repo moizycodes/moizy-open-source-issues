@@ -6,7 +6,7 @@ class RateLimiter {
       limit <= 0 ||
       duration <= 0
     ) {
-      throw new Error('Limit and duration must be positive numbers.');
+      throw new RangeError('RateLimiter: limit and duration must be positive numbers');
     }
 
     this.limit = limit;

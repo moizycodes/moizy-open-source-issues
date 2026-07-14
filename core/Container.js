@@ -46,11 +46,11 @@ class Container {
    */
   register(name, implementation, options = {}) {
     if (!name || typeof name !== 'string') {
-      throw new Error("Container.register: 'name' must be a non-empty string.");
+      throw new TypeError("Container.register: 'name' must be a non-empty string.");
     }
 
     if (typeof implementation !== 'function') {
-      throw new Error(
+      throw new TypeError(
         `Container.register: 'implementation' for "${name}" must be a constructor function or class.`,
       );
     }
