@@ -19,7 +19,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function retryAsync(asyncFn, options = {}) {
     if (typeof asyncFn !== "function") {
-        throw new TypeError("asyncFn must be a function");
+        throw new TypeError("retryAsync: asyncFn must be a function");
     }
 
     const {
@@ -29,7 +29,7 @@ export async function retryAsync(asyncFn, options = {}) {
     } = options;
 
     if (retries < 0 || delay < 0) {
-        throw new Error("retries and delay must be >= 0");
+        throw new RangeError("retryAsync: retries and delay must be >= 0");
     }
 
     let currentDelay = delay;

@@ -2,14 +2,14 @@
 
 // Custom Error Classes
 class NetworkError extends Error {
-    constructor(message = 'Network error occured') {
+    constructor(message = 'Network error occurred') {
         super(message);
         this.name = 'NetworkError';
     }
 }
 
 class ServerError extends Error {
-    constructor(status, message = 'Server error occured') {
+    constructor(status, message = 'Server error occurred') {
         super(message);
         this.name = 'ServerError';
         this.status = status;
@@ -17,7 +17,7 @@ class ServerError extends Error {
 }
 
 class ValidationError extends Error {
-    constructor(errors = [], message = 'Validation error occured') {
+    constructor(errors = [], message = 'Validation error occurred') {
         super(message);
         this.name = 'ValidationError';
         this.errors = errors;

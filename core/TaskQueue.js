@@ -22,7 +22,7 @@ class TaskQueue {
    */
   add(task) {
     if (typeof task !== 'function') {
-      throw new Error('Task must be a function');
+      throw new TypeError('TaskQueue.add: task must be a function');
     }
 
     this.queue.push(task);

@@ -9,7 +9,7 @@ function pLimit(concurrency) {
     !Number.isInteger(concurrency) ||
     concurrency < 1
   ) {
-    throw new Error('Concurrency must be a positive integer');
+    throw new RangeError('pLimit: concurrency must be a positive integer');
   }
 
   const queue = [];
@@ -35,7 +35,7 @@ function pLimit(concurrency) {
 
   return function limit(fn) {
     if (typeof fn !== 'function') {
-      return Promise.reject(new Error('Task must be a function'));
+      return Promise.reject(new TypeError('pLimit: task must be a function'));
     }
 
     return new Promise((resolve, reject) => {
