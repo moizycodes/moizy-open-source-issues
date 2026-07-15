@@ -1,0 +1,4 @@
+*.pid
+.docker/
+docker-compose.override.yml
+.env
