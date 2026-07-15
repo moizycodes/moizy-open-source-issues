@@ -21,7 +21,7 @@
  * const cloned = deepClone(obj);
  * console.log(cloned.self === cloned); // true
  */
-export function deepClone(value) {
+function deepClone(value) {
     return _clone(value, new WeakMap());
 }
 
@@ -64,3 +64,5 @@ function _clone(value, seen) {
 
     return clone;
 }
+
+module.exports = deepClone;

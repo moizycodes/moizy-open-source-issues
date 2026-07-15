@@ -1,4 +1,4 @@
-import { once } from "../utils/once";
+const once = require("../utils/once");
 
 test("once should only call function once", () => {
   let count = 0;

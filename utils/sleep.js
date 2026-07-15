@@ -4,7 +4,7 @@
  * Delays execution for a specified amount of time.
  */
 
-export function sleep(ms) {
+function sleep(ms) {
   const delay =
     typeof ms === "number" && ms > 0
       ? ms
@@ -14,3 +14,5 @@ export function sleep(ms) {
     setTimeout(resolve, delay);
   });
 }
+
+module.exports = sleep;

@@ -4,7 +4,7 @@
  * Provides functions to define tests, make assertions, and print a summary of results.
  *
  * Usage:
- * import { test, assertEquals, printSummary } from "./test-utils.js";
+ * const { test, assertEquals, printSummary } = require('./test-utils.js');
  *
  * test("example test", () => {
  *     assertEquals(1 + 1, 2);
@@ -16,7 +16,7 @@
 let passed = 0;
 let failed = 0;
 
-export const test = (name, fn) => {
+const test = (name, fn) => {
   try {
     fn();
     console.log(`✓ ${name}`);
@@ -28,11 +28,11 @@ export const test = (name, fn) => {
   }
 };
 
-export const assert = (condition, message) => {
+const assert = (condition, message) => {
   if (!condition) throw new Error(message || "Assertion failed");
 };
 
-export const assertEquals = (actual, expected, label = "") => {
+const assertEquals = (actual, expected, label = "") => {
   if (actual !== expected) {
     throw new Error(
       `${label ? label + ": " : ""}expected ${JSON.stringify(expected)}, ` +
@@ -41,7 +41,7 @@ export const assertEquals = (actual, expected, label = "") => {
   }
 };
 
-export const assertErrorExists = (errors, field, partialMessage) => {
+const assertErrorExists = (errors, field, partialMessage) => {
   const match = errors.find(
     (err) =>
       err.field === field && err.message.includes(partialMessage.toLowerCase()),
@@ -54,7 +54,7 @@ export const assertErrorExists = (errors, field, partialMessage) => {
   }
 };
 
-export const assertThrows = (fn, partialMessage = "") => {
+const assertThrows = (fn, partialMessage = "") => {
   try {
     fn();
     throw new Error("Expected function to throw, but it did not");
@@ -68,9 +68,11 @@ export const assertThrows = (fn, partialMessage = "") => {
   }
 };
 
-export const printSummary = () => {
+const printSummary = () => {
   console.log("\n" + "─".repeat(50));
   console.log(`Results: ${passed} passed, ${failed} failed`);
   console.log("─".repeat(50));
   if (failed > 0) process.exit(1);
 };
+
+module.exports = {test, assert, assertEquals, assertErrorExists, assertThrows, printSummary};

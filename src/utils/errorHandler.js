@@ -48,4 +48,4 @@ const handleError = (error) => {
     return userMessage;
 };
 
-export { NetworkError, ServerError, ValidationError, handleError };
+module.exports = { NetworkError, ServerError, ValidationError, handleError };

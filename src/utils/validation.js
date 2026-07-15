@@ -20,7 +20,7 @@ const createError = (message) => ({
  * @param {*} value - The input value.
  * @returns {{ valid: boolean, message: string }}
  */
-export const validateRequired = (value) => {
+const validateRequired = (value) => {
     // Coerce to string if possible, then check for emptiness after trimming
     if (value === null || value === undefined || (typeof value === 'string' && value.trim() === "")) {
         return createError("This field is required.");
@@ -33,7 +33,7 @@ export const validateRequired = (value) => {
  * @param {string} value - The input value.
  * @returns {{ valid: boolean, message: string }}
  */
-export const validateEmail = (value) => {
+const validateEmail = (value) => {
     // Simple regex pattern for email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
 
@@ -53,7 +53,7 @@ export const validateEmail = (value) => {
  * @param {number} [minLength=8] - The minimum required length.
  * @returns {{ valid: boolean, message: string }}
  */
-export const validatePassword = (value, minLength = 8) => {
+const validatePassword = (value, minLength = 8) => {
     if (!value) return VALID_RESULT;
     
     if (String(value).length < minLength) {
@@ -68,7 +68,7 @@ export const validatePassword = (value, minLength = 8) => {
  * @param {*} value - The input value.
  * @returns {{ valid: boolean, message: string }}
  */
-export const validateNumber = (value) => {
+const validateNumber = (value) => {
     // Skip if empty
     if (value === "" || value === null || value === undefined) return VALID_RESULT;
 
@@ -94,7 +94,7 @@ export const validateNumber = (value) => {
  * @param {Array<Function>} rules - An array of validation functions (or partially applied functions) to run.
  * @returns {{ valid: boolean, message: string }}
  */
-export function validateField(value, rules) {
+function validateField(value, rules) {
     if (!Array.isArray(rules)) {
         console.error("validateField requires an array of rules.");
         return VALID_RESULT;
@@ -115,3 +115,5 @@ export function validateField(value, rules) {
     // If all rules passed, return the success result
     return VALID_RESULT;
 }
+
+module.exports = {validateRequired, validateEmail, validatePassword, validateNumber, validateField};

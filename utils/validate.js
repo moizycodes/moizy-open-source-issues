@@ -159,7 +159,7 @@ const validateField = (field, value, fieldSchema) => {
  * //   ]
  * // }
  */
-export function validate(schema, data) {
+function validate(schema, data) {
   if (!schema || typeof schema !== "object") {
     return { isValid: true, errors: [] };
   }
@@ -181,3 +181,5 @@ export function validate(schema, data) {
     errors,
   };
 }
+
+module.exports = validate;
