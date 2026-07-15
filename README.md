@@ -73,6 +73,16 @@ Custom fields can be added when needed:
 maskSensitiveData(user, ['salary', 'nationalId']);
 ```
 
+### .gitignore Generator
+
+Use `gitignore-generator/gitignore.js` to generate a ready-to-use `.gitignore` file for one or more technologies (Node.js, React, Next.js, Express.js, VS Code, JetBrains IDEs, Python, Docker, Laravel, Flutter, Android, Go, Rust, Java).
+
+```bash
+node gitignore-generator/gitignore.js node react vscode
+```
+
+See `gitignore-generator/README.md` for full usage and supported technologies.
+
 ---
 
 ✅ Issue Guidelines
