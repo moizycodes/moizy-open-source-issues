@@ -73,6 +73,20 @@ Custom fields can be added when needed:
 maskSensitiveData(user, ['salary', 'nationalId']);
 ```
 
+### Cache-Control Parser
+
+Use `utils/parseCacheControl.js` to turn an HTTP `Cache-Control` header into an object.
+
+```js
+const parseCacheControl = require('./utils/parseCacheControl');
+
+const directives = parseCacheControl('public, max-age=3600, must-revalidate');
+console.log(directives);
+// { public: true, maxAge: 3600, mustRevalidate: true }
+```
+
+This parser supports boolean directives, numeric values, quoted strings, and hyphenated directives converted to camelCase.
+
 ### .gitignore Generator
 
 Use `gitignore-generator/gitignore.js` to generate a ready-to-use `.gitignore` file for one or more technologies (Node.js, React, Next.js, Express.js, VS Code, JetBrains IDEs, Python, Docker, Laravel, Flutter, Android, Go, Rust, Java).
