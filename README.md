@@ -47,6 +47,28 @@ Welcome to **Moizy Open Source Issues**, a developer-friendly hub where you can 
 
 ## Available Utilities
 
+### Async Debouncing
+
+Use `utils/debounceAsync.js` to delay an asynchronous operation until calls stop arriving for the configured delay.
+
+```js
+const debounceAsync = require("./utils/debounceAsync");
+
+const searchUsers = debounceAsync(async query => {
+  const response = await fetch(`/api/users?q=${encodeURIComponent(query)}`);
+  if (!response.ok) {
+    throw new Error("Unable to search users");
+  }
+  return response.json();
+}, 300);
+
+searchUsers("rea").then(users => console.log(users));
+searchUsers("react").then(users => console.log(users));
+```
+
+Only the latest call in a debounce window invokes the callback. Every promise returned during that window settles with the final invocation's value or error. The latest call's arguments and `this` context are used. The callback may return a promise or a regular value. The delay must be a finite, non-negative number.
+
+
 ### Sensitive Data Masking
 
 Use `utils/maskSensitiveData.js` to create a safe copy of data before logging.
