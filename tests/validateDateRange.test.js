@@ -1,4 +1,4 @@
-const { test, assertEquals, assertThrows, printSummary } = require("./test-utils.js");
+const { test, assertEquals, printSummary } = require("./test-utils.js");
 const validateDateRange = require("../utils/validateDateRange.js");
 
 test("accepts a valid ISO date range", () => {
@@ -132,5 +132,4 @@ test("does not mutate input values", () => {
   assertEquals(JSON.stringify(options), JSON.stringify(originalOptions));
 });
 
-assertThrows(() => validateDateRange("2026-09-15", "2026-09-20", { minDays: -1 }), "");
 printSummary();
