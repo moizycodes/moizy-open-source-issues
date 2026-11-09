@@ -118,3 +118,30 @@ We encourage discussions, questions, and collaboration! Feel free to open a disc
 💡 Keep Learning
 
 Every issue is a chance to practice, learn, and showcase your skills. Start contributing today and grow your developer profile. 🚀
+
+
+### Date Range Validation
+
+Use `utils/validateDateRange.js` to validate strict calendar date ranges without adding dependencies.
+
+```js
+const validateDateRange = require("./utils/validateDateRange");
+
+const result = validateDateRange("2026-09-15", "2026-09-20", {
+  allowSameDay: true,
+  minDays: 1,
+  maxDays: 30
+});
+
+if (!result.valid) {
+  console.error(result.reason);
+}
+```
+
+Date strings must use the unambiguous `YYYY-MM-DD` format. Valid JavaScript `Date` instances are also accepted and interpreted by their UTC calendar date. Same-day ranges are rejected by default. The optional `allowSameDay`, `minDays`, and `maxDays` settings are validated before the dates are checked. Invalid inputs or options return `{ valid: false, reason }`; valid ranges return normalized date strings and the number of days between them.
+
+Run the utility tests with:
+
+```bash
+node tests/validateDateRange.test.js
+```
