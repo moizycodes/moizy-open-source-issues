@@ -105,8 +105,10 @@ function parseDate(value) {
   }
 
   const [year, month, day] = value.split("-").map(Number);
-  const timestamp = Date.UTC(year, month - 1, day);
-  const date = new Date(timestamp);
+  const date = new Date(0);
+  date.setUTCHours(0, 0, 0, 0);
+  date.setUTCFullYear(year, month - 1, day);
+  const timestamp = date.getTime();
 
   if (
     date.getUTCFullYear() !== year ||
