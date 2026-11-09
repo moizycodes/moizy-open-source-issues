@@ -118,3 +118,22 @@ We encourage discussions, questions, and collaboration! Feel free to open a disc
 💡 Keep Learning
 
 Every issue is a chance to practice, learn, and showcase your skills. Start contributing today and grow your developer profile. 🚀
+
+
+### Unsaved Changes Guard
+
+Use `utils/createUnsavedChangesGuard.js` to track unsaved page changes and ask the browser to show its standard leave-page confirmation when a user closes, refreshes, or navigates away from a dirty page.
+
+```js
+const { createUnsavedChangesGuard } = require('./utils/createUnsavedChangesGuard');
+
+const guard = createUnsavedChangesGuard();
+
+form.addEventListener('input', () => guard.markDirty());
+form.addEventListener('submit', () => guard.markClean());
+
+// Call when the page or component is disposed.
+window.addEventListener('pagehide', () => guard.destroy(), { once: true });
+```
+
+The guard exposes `markDirty()`, `markClean()`, `isDirty()`, and `destroy()`. It registers one `beforeunload` listener while dirty and removes only that listener when clean or destroyed, leaving unrelated handlers untouched. Browsers control the confirmation dialog text, so the utility relies only on the standard `preventDefault()` and empty `returnValue` signal. An optional event target can be passed to `createUnsavedChangesGuard(target)` for testing or non-window integrations.
