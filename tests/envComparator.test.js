@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const parseEnv = require("../env-sync-checker/lib/parser.js");
@@ -35,15 +36,16 @@ const assert = (condition, message) => {
 // ------------------------------
 
 function createTestFile(content) {
-  const filePath = path.join(__dirname, "temp.env");
+  // Test files run in parallel, so each fixture gets a folder of its own.
+  // A shared path lets one test file overwrite or delete another's fixture.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "env-sync-checker-"));
+  const filePath = path.join(dir, "temp.env");
   fs.writeFileSync(filePath, content);
   return filePath;
 }
 
 function removeTestFile(filePath) {
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
+  fs.rmSync(path.dirname(filePath), { recursive: true, force: true });
 }
 
 // ------------------------------
