@@ -1,28 +1,31 @@
+const { describe, test } = require("node:test");
+const assert = require("node:assert/strict");
+
 const { detectConfigDrift } = require("../utils/detectConfigDrift");
 
 describe("detectConfigDrift", () => {
   test("returns no drift for identical configs", () => {
     const r = detectConfigDrift({ a: 1, b: 2 }, { a: 1, b: 2 });
-    expect(r.hasDrift).toBe(false);
-    expect(r.added).toEqual([]);
-    expect(r.removed).toEqual([]);
-    expect(r.changed).toEqual([]);
+    assert.equal(r.hasDrift, false);
+    assert.deepEqual(r.added, []);
+    assert.deepEqual(r.removed, []);
+    assert.deepEqual(r.changed, []);
   });
 
   test("detects added property", () => {
     const r = detectConfigDrift({ a: 1 }, { a: 1, b: 2 });
-    expect(r.added).toEqual(["b"]);
-    expect(r.hasDrift).toBe(true);
+    assert.deepEqual(r.added, ["b"]);
+    assert.equal(r.hasDrift, true);
   });
 
   test("detects removed property", () => {
     const r = detectConfigDrift({ a: 1, b: 2 }, { a: 1 });
-    expect(r.removed).toEqual(["b"]);
+    assert.deepEqual(r.removed, ["b"]);
   });
 
   test("detects changed value", () => {
     const r = detectConfigDrift({ timeout: 5000 }, { timeout: 3000 });
-    expect(r.changed).toEqual([{ key: "timeout", from: 5000, to: 3000 }]);
+    assert.deepEqual(r.changed, [{ key: "timeout", from: 5000, to: 3000 }]);
   });
 
   test("reports multiple differences", () => {
@@ -30,9 +33,9 @@ describe("detectConfigDrift", () => {
       { a: 1, b: 2, c: 3 },
       { a: 9, c: 3, d: 4 }
     );
-    expect(r.changed.length).toBe(1);
-    expect(r.removed).toEqual(["b"]);
-    expect(r.added).toEqual(["d"]);
+    assert.equal(r.changed.length, 1);
+    assert.deepEqual(r.removed, ["b"]);
+    assert.deepEqual(r.added, ["d"]);
   });
 
   test("supports nested objects", () => {
@@ -40,7 +43,7 @@ describe("detectConfigDrift", () => {
       { database: { host: "staging-db", port: 5432 } },
       { database: { host: "production-db", port: 5432 } }
     );
-    expect(r.changed).toEqual([
+    assert.deepEqual(r.changed, [
       { key: "database.host", from: "staging-db", to: "production-db" },
     ]);
   });
@@ -50,33 +53,33 @@ describe("detectConfigDrift", () => {
       { a: { b: { c: { d: 1 } } } },
       { a: { b: { c: { d: 2 } } } }
     );
-    expect(r.changed[0].key).toBe("a.b.c.d");
+    assert.equal(r.changed[0].key, "a.b.c.d");
   });
 
   test("handles arrays", () => {
     const r = detectConfigDrift({ list: [1, 2, 3] }, { list: [1, 2, 4] });
-    expect(r.changed[0].key).toBe("list");
+    assert.equal(r.changed[0].key, "list");
   });
 
   test("handles empty objects", () => {
     const r = detectConfigDrift({}, {});
-    expect(r.hasDrift).toBe(false);
+    assert.equal(r.hasDrift, false);
   });
 
   test("handles null input", () => {
     const r = detectConfigDrift(null, { a: 1 });
-    expect(r.hasDrift).toBe(false);
+    assert.equal(r.hasDrift, false);
   });
 
   test("handles undefined input", () => {
     const r = detectConfigDrift(undefined, { a: 1 });
-    expect(r.hasDrift).toBe(false);
+    assert.equal(r.hasDrift, false);
   });
 
   test("distinguishes missing vs undefined", () => {
     const r = detectConfigDrift({ a: 1 }, { a: undefined });
-    expect(r.changed.length).toBe(1);
-    expect(r.changed[0].key).toBe("a");
+    assert.equal(r.changed.length, 1);
+    assert.equal(r.changed[0].key, "a");
   });
 
   test("respects ignored properties", () => {
@@ -85,7 +88,7 @@ describe("detectConfigDrift", () => {
       { a: 1, buildId: "y" },
       { ignore: ["buildId"] }
     );
-    expect(r.hasDrift).toBe(false);
+    assert.equal(r.hasDrift, false);
   });
 
   test("does not mutate inputs", () => {
@@ -94,13 +97,13 @@ describe("detectConfigDrift", () => {
     const baseCopy = JSON.parse(JSON.stringify(base));
     const targetCopy = JSON.parse(JSON.stringify(target));
     detectConfigDrift(base, target);
-    expect(base).toEqual(baseCopy);
-    expect(target).toEqual(targetCopy);
+    assert.deepEqual(base, baseCopy);
+    assert.deepEqual(target, targetCopy);
   });
 
   test("returns deterministic ordering", () => {
     const r1 = detectConfigDrift({ b: 1, a: 2 }, { b: 2, a: 1 });
     const r2 = detectConfigDrift({ a: 2, b: 1 }, { a: 1, b: 2 });
-    expect(r1).toEqual(r2);
+    assert.deepEqual(r1, r2);
   });
 });

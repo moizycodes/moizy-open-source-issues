@@ -10,8 +10,9 @@ Thank you for your interest in contributing! This guide will help you understand
 3. [Issue Guidelines](#issue-guidelines)
 4. [Pull Request Guidelines](#pull-request-guidelines)
 5. [Code Style](#code-style)
-6. [Community Guidelines](#community-guidelines)
-7. [Getting Help](#getting-help)
+6. [Testing](#testing)
+7. [Community Guidelines](#community-guidelines)
+8. [Getting Help](#getting-help)
 
 ---
 
@@ -75,7 +76,7 @@ Open a Pull Request referencing the issue.
   Closes #<issue-number>
   
 - Provide a clear description of what the PR does.
-- Ensure the PR passes all tests (if any).
+- Ensure `npm test` passes. GitHub Actions runs it on every PR.
 - Avoid unrelated changes in the PR.
 - Wait for review and respond politely to feedback.
 
@@ -87,6 +88,35 @@ Open a Pull Request referencing the issue.
 - Use descriptive variable and function names.
 - Comment complex logic for clarity.
 - Avoid unnecessary code duplication.
+
+---
+
+## Testing
+
+Tests need Node.js 22 or newer and no dependencies. Run all of them from the repository root:
+
+```bash
+npm test
+```
+
+Run a single file with `node --test tests/chunk.test.js`.
+
+When you add or change a utility:
+
+- Put its tests in `tests/<utilityName>.test.js` (or `<project>/tests/<name>.test.js` for a mini-project). Only files ending in `.test.js` are picked up.
+- Write them with Node's built-in [`node:test`](https://nodejs.org/api/test.html) and `node:assert/strict`. Do not use Jest or other test libraries.
+- Assert on results. A test that only prints with `console.log` can never fail.
+
+```js
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
+const chunk = require('../utils/chunk');
+
+test('chunk splits an array into groups of the given size', () => {
+  assert.deepEqual(chunk([1, 2, 3, 4], 2), [[1, 2], [3, 4]]);
+});
+```
 
 ---
 

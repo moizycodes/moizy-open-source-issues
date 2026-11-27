@@ -1,20 +1,26 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+
 const debounce = require("../utils/debounce");
 
-jest.useFakeTimers();
-
-test("debounce delays function execution", () => {
+test("debounce delays function execution", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   let count = 0;
   const increment = () => count++;
   const debounced = debounce(increment, 300);
 
   debounced();
-  expect(count).toBe(0);
+  assert.equal(count, 0);
 
-  jest.advanceTimersByTime(300);
-  expect(count).toBe(1);
+  t.mock.timers.tick(299);
+  assert.equal(count, 0);
+
+  t.mock.timers.tick(1);
+  assert.equal(count, 1);
 });
 
-test("debounce only calls the function once for rapid successive calls", () => {
+test("debounce only calls the function once for rapid successive calls", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   let count = 0;
   const increment = () => count++;
   const debounced = debounce(increment, 300);
@@ -23,11 +29,12 @@ test("debounce only calls the function once for rapid successive calls", () => {
   debounced();
   debounced();
 
-  jest.advanceTimersByTime(300);
-  expect(count).toBe(1);
+  t.mock.timers.tick(300);
+  assert.equal(count, 1);
 });
 
-test("debounce preserves the calling context (this)", () => {
+test("debounce preserves the calling context (this)", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   const user = {
     name: "Moeez",
     greet: debounce(function () {
@@ -36,12 +43,13 @@ test("debounce preserves the calling context (this)", () => {
   };
 
   user.greet();
-  jest.advanceTimersByTime(300);
+  t.mock.timers.tick(300);
 
-  expect(user.captured).toBe("Moeez");
+  assert.equal(user.captured, "Moeez");
 });
 
-test("debounce forwards arguments correctly", () => {
+test("debounce forwards arguments correctly", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
   let received;
   const fn = (a, b) => {
     received = a + b;
@@ -49,7 +57,7 @@ test("debounce forwards arguments correctly", () => {
   const debounced = debounce(fn, 300);
 
   debounced(2, 3);
-  jest.advanceTimersByTime(300);
+  t.mock.timers.tick(300);
 
-  expect(received).toBe(5);
+  assert.equal(received, 5);
 });

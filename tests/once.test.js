@@ -1,3 +1,6 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+
 const once = require("../utils/once");
 
 test("once should only call function once", () => {
@@ -10,7 +13,7 @@ test("once should only call function once", () => {
   incrementOnce();
   incrementOnce();
 
-  expect(count).toBe(1);
+  assert.equal(count, 1);
 });
 
 test("once preserves the calling context (this)", () => {
@@ -21,7 +24,7 @@ test("once preserves the calling context (this)", () => {
     }),
   };
 
-  expect(user.greet()).toBe("Moeez");
+  assert.equal(user.greet(), "Moeez");
 });
 
 test("once forwards arguments and caches the first result", () => {
@@ -32,7 +35,7 @@ test("once forwards arguments and caches the first result", () => {
     }),
   };
 
-  expect(obj.add(1, 2)).toBe(13);
+  assert.equal(obj.add(1, 2), 13);
   // Subsequent calls return the cached result, ignoring new arguments.
-  expect(obj.add(3, 4)).toBe(13);
+  assert.equal(obj.add(3, 4), 13);
 });

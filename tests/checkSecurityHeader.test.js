@@ -1,4 +1,7 @@
-const checkSecurityHeaders = require('./checkSecurityHeaders');
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+
+const checkSecurityHeaders = require('../utils/checkSecurityHeader');
 
 describe('checkSecurityHeaders()', () => {
   it('identifies correctly configured headers (All present)', () => {
@@ -11,9 +14,9 @@ describe('checkSecurityHeaders()', () => {
       "X-Frame-Options": "DENY"
     };
     const result = checkSecurityHeaders(input);
-    expect(result.score).toBe(100);
-    expect(result.present.length).toBe(6);
-    expect(result.missing.length).toBe(0);
+    assert.equal(result.score, 100);
+    assert.equal(result.present.length, 6);
+    assert.equal(result.missing.length, 0);
   });
 
   it('handles mixed-case header names case-insensitively', () => {
@@ -22,15 +25,15 @@ describe('checkSecurityHeaders()', () => {
       "X-coNTent-TypE-OptionS": "nosniff"
     };
     const result = checkSecurityHeaders(input);
-    expect(result.present).toContain("content-security-policy");
-    expect(result.present).toContain("x-content-type-options");
-    expect(result.score).toBe(33); // 2 out of 6
+    assert.ok(result.present.includes("content-security-policy"));
+    assert.ok(result.present.includes("x-content-type-options"));
+    assert.equal(result.score, 33); // 2 out of 6
   });
 
   it('handles empty, null, or undefined input safely', () => {
-    expect(checkSecurityHeaders(null)).toEqual({ score: 0, missing: [], present: [] });
-    expect(checkSecurityHeaders(undefined)).toEqual({ score: 0, missing: [], present: [] });
-    expect(checkSecurityHeaders("invalid")).toEqual({ score: 0, missing: [], present: [] });
+    assert.deepEqual(checkSecurityHeaders(null), { score: 0, missing: [], present: [] });
+    assert.deepEqual(checkSecurityHeaders(undefined), { score: 0, missing: [], present: [] });
+    assert.deepEqual(checkSecurityHeaders("invalid"), { score: 0, missing: [], present: [] });
   });
 
   it('fails headers with invalid values where practical', () => {
@@ -41,8 +44,8 @@ describe('checkSecurityHeaders()', () => {
       "X-Content-Type-Options": "invalid-value" 
     };
     const result = checkSecurityHeaders(input);
-    expect(result.missing).toContain("strict-transport-security");
-    expect(result.missing).toContain("x-content-type-options");
+    assert.ok(result.missing.includes("strict-transport-security"));
+    assert.ok(result.missing.includes("x-content-type-options"));
   });
 
   it('allows configurable recommended header lists', () => {
@@ -50,15 +53,15 @@ describe('checkSecurityHeaders()', () => {
     const options = { customHeaders: ["X-Custom-Security", "Another-Header"] };
     const result = checkSecurityHeaders(input, options);
     
-    expect(result.score).toBe(50);
-    expect(result.present).toEqual(["x-custom-security"]);
-    expect(result.missing).toEqual(["another-header"]);
+    assert.equal(result.score, 50);
+    assert.deepEqual(result.present, ["x-custom-security"]);
+    assert.deepEqual(result.missing, ["another-header"]);
   });
 
   it('does not mutate the original headers object', () => {
     const input = { "X-Frame-Options": "SAMEORIGIN" };
     const inputCopy = { ...input };
     checkSecurityHeaders(input);
-    expect(input).toEqual(inputCopy);
+    assert.deepEqual(input, inputCopy);
   });
 });

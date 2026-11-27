@@ -1,3 +1,6 @@
+const { describe, test } = require("node:test");
+const assert = require("node:assert/strict");
+
 const validateFile = require("../utils/validateFile");
 
 describe("validateFile", () => {
@@ -13,8 +16,8 @@ describe("validateFile", () => {
       allowedTypes: ["image/png"],
     });
 
-    expect(result.valid).toBe(true);
-    expect(result.errors).toEqual([]);
+    assert.equal(result.valid, true);
+    assert.deepEqual(result.errors, []);
   });
 
   test("rejects oversized file", () => {
@@ -22,10 +25,8 @@ describe("validateFile", () => {
       maxSize: 1000,
     });
 
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain(
-      "File size exceeds maximum limit"
-    );
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.includes("File size exceeds maximum limit"));
   });
 
   test("rejects invalid mime type", () => {
@@ -33,10 +34,8 @@ describe("validateFile", () => {
       allowedTypes: ["image/jpeg"],
     });
 
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain(
-      "File type is not allowed"
-    );
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.includes("File type is not allowed"));
   });
 
   test("rejects missing required file", () => {
@@ -44,26 +43,22 @@ describe("validateFile", () => {
       required: true,
     });
 
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain(
-      "File is required"
-    );
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.includes("File is required"));
   });
 
   test("handles missing optional file", () => {
     const result = validateFile(null);
 
-    expect(result.valid).toBe(true);
-    expect(result.errors).toEqual([]);
+    assert.equal(result.valid, true);
+    assert.deepEqual(result.errors, []);
   });
 
   test("rejects invalid file object", () => {
     const result = validateFile({});
 
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain(
-      "Invalid file object"
-    );
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.includes("Invalid file object"));
   });
 
   test("allows zero-byte file unless restricted", () => {
@@ -73,6 +68,6 @@ describe("validateFile", () => {
       type: "image/png",
     });
 
-    expect(result.valid).toBe(true);
+    assert.equal(result.valid, true);
   });
 });

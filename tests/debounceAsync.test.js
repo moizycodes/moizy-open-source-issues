@@ -1,50 +1,52 @@
+const { describe, test, beforeEach, afterEach, mock } = require("node:test");
+const assert = require("node:assert/strict");
+
 const debounceAsync = require("../utils/debounceAsync");
 
 describe("debounceAsync", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    mock.timers.enable({ apis: ["setTimeout"] });
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    mock.timers.reset();
   });
 
   test("delays a single invocation until the delay has elapsed", async () => {
-    const fn = jest.fn().mockResolvedValue("result");
+    const fn = mock.fn(async () => "result");
     const debounced = debounceAsync(fn, 300);
 
     const result = debounced("value");
 
-    expect(fn).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(299);
-    expect(fn).not.toHaveBeenCalled();
+    assert.equal(fn.mock.callCount(), 0);
+    mock.timers.tick(299);
+    assert.equal(fn.mock.callCount(), 0);
 
-    jest.advanceTimersByTime(1);
-    await expect(result).resolves.toBe("result");
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(fn).toHaveBeenCalledWith("value");
+    mock.timers.tick(1);
+    assert.equal(await result, "result");
+    assert.equal(fn.mock.callCount(), 1);
+    assert.deepEqual(fn.mock.calls[0].arguments, ["value"]);
   });
 
   test("resets the timer for rapid consecutive calls", async () => {
-    const fn = jest.fn().mockResolvedValue("latest");
+    const fn = mock.fn(async () => "latest");
     const debounced = debounceAsync(fn, 300);
 
     const first = debounced("first");
-    jest.advanceTimersByTime(200);
+    mock.timers.tick(200);
     const second = debounced("second");
-    jest.advanceTimersByTime(200);
+    mock.timers.tick(200);
 
-    expect(fn).not.toHaveBeenCalled();
+    assert.equal(fn.mock.callCount(), 0);
 
-    jest.advanceTimersByTime(100);
-    await expect(Promise.all([first, second])).resolves.toEqual(["latest", "latest"]);
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(fn).toHaveBeenCalledWith("second");
+    mock.timers.tick(100);
+    assert.deepEqual(await Promise.all([first, second]), ["latest", "latest"]);
+    assert.equal(fn.mock.callCount(), 1);
+    assert.deepEqual(fn.mock.calls[0].arguments, ["second"]);
   });
 
   test("uses the latest arguments and context", async () => {
-    const fn = jest.fn(function (value) {
+    const fn = mock.fn(function (value) {
       return Promise.resolve({ value, name: this.name });
     });
     const debounced = debounceAsync(fn, 50);
@@ -54,36 +56,40 @@ describe("debounceAsync", () => {
     const first = debounced.call(firstContext, "old");
     const latest = debounced.call(latestContext, "new");
 
-    jest.advanceTimersByTime(50);
+    mock.timers.tick(50);
 
-    await expect(first).resolves.toEqual({ value: "new", name: "latest" });
-    await expect(latest).resolves.toEqual({ value: "new", name: "latest" });
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(fn).toHaveBeenCalledWith("new");
+    assert.deepEqual(await first, { value: "new", name: "latest" });
+    assert.deepEqual(await latest, { value: "new", name: "latest" });
+    assert.equal(fn.mock.callCount(), 1);
+    assert.deepEqual(fn.mock.calls[0].arguments, ["new"]);
   });
 
   test("resolves every pending caller with the final invocation result", async () => {
     const debounced = debounceAsync(async value => value * 2, 10);
 
     const results = [debounced(1), debounced(2), debounced(3)];
-    jest.advanceTimersByTime(10);
+    mock.timers.tick(10);
 
-    await expect(Promise.all(results)).resolves.toEqual([6, 6, 6]);
+    assert.deepEqual(await Promise.all(results), [6, 6, 6]);
   });
 
   test("rejects every pending caller when the final invocation rejects", async () => {
     const error = new Error("request failed");
-    const fn = jest.fn().mockRejectedValue(error);
+    const fn = mock.fn(async () => {
+      throw error;
+    });
     const debounced = debounceAsync(fn, 10);
 
     const first = debounced("old");
     const latest = debounced("new");
-    jest.advanceTimersByTime(10);
+    mock.timers.tick(10);
 
-    await expect(first).rejects.toBe(error);
-    await expect(latest).rejects.toBe(error);
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(fn).toHaveBeenCalledWith("new");
+    await Promise.all([
+      assert.rejects(first, reason => reason === error),
+      assert.rejects(latest, reason => reason === error),
+    ]);
+    assert.equal(fn.mock.callCount(), 1);
+    assert.deepEqual(fn.mock.calls[0].arguments, ["new"]);
   });
 
   test("converts synchronous exceptions into promise rejections", async () => {
@@ -93,64 +99,62 @@ describe("debounceAsync", () => {
     }, 10);
 
     const result = debounced();
-    jest.advanceTimersByTime(10);
+    mock.timers.tick(10);
 
-    await expect(result).rejects.toBe(error);
+    await assert.rejects(result, reason => reason === error);
   });
 
   test("supports independent debounced functions", async () => {
-    const firstFn = jest.fn().mockResolvedValue("first");
-    const secondFn = jest.fn().mockResolvedValue("second");
+    const firstFn = mock.fn(async () => "first");
+    const secondFn = mock.fn(async () => "second");
     const first = debounceAsync(firstFn, 100);
     const second = debounceAsync(secondFn, 200);
 
     const firstResult = first();
     const secondResult = second();
 
-    jest.advanceTimersByTime(100);
-    await expect(firstResult).resolves.toBe("first");
-    expect(secondFn).not.toHaveBeenCalled();
+    mock.timers.tick(100);
+    assert.equal(await firstResult, "first");
+    assert.equal(secondFn.mock.callCount(), 0);
 
-    jest.advanceTimersByTime(100);
-    await expect(secondResult).resolves.toBe("second");
-    expect(firstFn).toHaveBeenCalledTimes(1);
-    expect(secondFn).toHaveBeenCalledTimes(1);
+    mock.timers.tick(100);
+    assert.equal(await secondResult, "second");
+    assert.equal(firstFn.mock.callCount(), 1);
+    assert.equal(secondFn.mock.callCount(), 1);
   });
 
-  test.each([-1, NaN, Infinity, -Infinity, "100", null, undefined])(
-    "rejects invalid delay %s",
-    delay => {
-      expect(() => debounceAsync(jest.fn(), delay)).toThrow(RangeError);
-    }
-  );
+  for (const delay of [-1, NaN, Infinity, -Infinity, "100", null, undefined]) {
+    test(`rejects invalid delay ${String(delay)}`, () => {
+      assert.throws(() => debounceAsync(() => {}, delay), RangeError);
+    });
+  }
 
   test("rejects a non-function callback", () => {
-    expect(() => debounceAsync(null, 10)).toThrow(TypeError);
+    assert.throws(() => debounceAsync(null, 10), TypeError);
   });
 
   test("supports a zero delay", async () => {
     const debounced = debounceAsync(async () => "ready", 0);
     const result = debounced();
 
-    jest.advanceTimersByTime(0);
+    mock.timers.tick(0);
 
-    await expect(result).resolves.toBe("ready");
+    assert.equal(await result, "ready");
   });
 
   test("a later call starts a new independent debounce window", async () => {
-    const fn = jest.fn()
-      .mockResolvedValueOnce("first")
-      .mockResolvedValueOnce("second");
+    const values = ["first", "second"];
+    const fn = mock.fn(async () => values.shift());
     const debounced = debounceAsync(fn, 10);
 
     const first = debounced("one");
-    jest.advanceTimersByTime(10);
-    await expect(first).resolves.toBe("first");
+    mock.timers.tick(10);
+    assert.equal(await first, "first");
 
     const second = debounced("two");
-    jest.advanceTimersByTime(10);
-    await expect(second).resolves.toBe("second");
+    mock.timers.tick(10);
+    assert.equal(await second, "second");
 
-    expect(fn).toHaveBeenCalledTimes(2);
+    assert.equal(fn.mock.callCount(), 2);
   });
 });

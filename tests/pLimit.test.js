@@ -1,3 +1,6 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
 const pLimit = require('../utils/pLimit');
 
 const delay = (value, time) => new Promise((resolve) => {
@@ -6,7 +9,7 @@ const delay = (value, time) => new Promise((resolve) => {
   }, time);
 });
 
-async function testConcurrencyLimit() {
+test('pLimit never runs more tasks at once than the concurrency limit', async () => {
   const limit = pLimit(2);
   let activeCount = 0;
   let maxActiveCount = 0;
@@ -15,37 +18,31 @@ async function testConcurrencyLimit() {
     activeCount += 1;
     maxActiveCount = Math.max(maxActiveCount, activeCount);
 
-    const result = await delay(value, 50);
+    const result = await delay(value, 10);
 
     activeCount -= 1;
     return result;
   }));
 
-  const results = await Promise.all(tasks);
+  assert.deepEqual(await Promise.all(tasks), [1, 2, 3, 4]);
+  assert.equal(maxActiveCount, 2);
+});
 
-  console.log(results);
-  console.log(maxActiveCount);
-}
-
-async function testSyncTask() {
+test('pLimit resolves with the result of a synchronous task', async () => {
   const limit = pLimit(1);
 
-  const result = await limit(() => 'sync result');
+  assert.equal(await limit(() => 'sync result'), 'sync result');
+});
 
-  console.log(result);
-}
-
-async function testRejectedTask() {
+test('pLimit rejects when the task rejects', async () => {
   const limit = pLimit(1);
 
-  try {
-    await limit(() => Promise.reject(new Error('Task failed')));
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+  await assert.rejects(limit(() => Promise.reject(new Error('Task failed'))), {
+    message: 'Task failed'
+  });
+});
 
-async function testQueueContinuesAfterReject() {
+test('pLimit keeps running queued tasks after one rejects', async () => {
   const limit = pLimit(1);
 
   const results = await Promise.allSettled([
@@ -53,47 +50,22 @@ async function testQueueContinuesAfterReject() {
     limit(() => Promise.resolve('second task completed'))
   ]);
 
-  console.log(results[0].status);
-  console.log(results[1].value);
-}
+  assert.equal(results[0].status, 'rejected');
+  assert.equal(results[1].value, 'second task completed');
+});
 
-function testInvalidConcurrency() {
-  try {
-    pLimit(0);
-  } catch (error) {
-    console.log(error.message);
-  }
+test('pLimit throws when concurrency is not a positive integer', () => {
+  const expected = { message: 'pLimit: concurrency must be a positive integer' };
 
-  try {
-    pLimit(-1);
-  } catch (error) {
-    console.log(error.message);
-  }
+  assert.throws(() => pLimit(0), expected);
+  assert.throws(() => pLimit(-1), expected);
+  assert.throws(() => pLimit(1.5), expected);
+});
 
-  try {
-    pLimit(1.5);
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-async function testInvalidTask() {
+test('pLimit rejects when the task is not a function', async () => {
   const limit = pLimit(1);
 
-  try {
-    await limit('not a function');
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-async function runTests() {
-  await testConcurrencyLimit();
-  await testSyncTask();
-  await testRejectedTask();
-  await testQueueContinuesAfterReject();
-  testInvalidConcurrency();
-  await testInvalidTask();
-}
-
-runTests();
+  await assert.rejects(async () => limit('not a function'), {
+    message: 'pLimit: task must be a function'
+  });
+});
