@@ -102,4 +102,4 @@ const storageManager = {
   },
 };
 
-export { storageManager };
+module.exports = storageManager;

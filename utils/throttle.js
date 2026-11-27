@@ -101,5 +101,4 @@ function throttle(fn, delay, options = {}) {
   };
 }
 
-// Export the function
-export default throttle;
+module.exports = throttle;

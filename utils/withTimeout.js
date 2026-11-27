@@ -40,4 +40,4 @@ function withTimeout(promise, timeout) {
     });
 }
 
-export { withTimeout };
+module.exports = withTimeout;

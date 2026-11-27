@@ -17,7 +17,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  * @returns {Promise<any>}
  */
 
-export async function retryAsync(asyncFn, options = {}) {
+async function retryAsync(asyncFn, options = {}) {
     if (typeof asyncFn !== "function") {
         throw new TypeError("retryAsync: asyncFn must be a function");
     }
@@ -55,3 +55,5 @@ export async function retryAsync(asyncFn, options = {}) {
 
     throw lastError;
 }
+
+module.exports = retryAsync;
