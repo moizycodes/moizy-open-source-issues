@@ -5,6 +5,7 @@
 class EventEmitter {
   constructor() {
     this.events = new Map();
+    this.middlewares = [];
   }
 
   /**
@@ -27,11 +28,28 @@ class EventEmitter {
 
   /**
    * Emit an event and pass arguments to each listener.
+   * Middleware registered with use() runs first and can change the
+   * arguments or stop the event.
    *
    * @param {string} event
    * @param {...*} args
    */
   emit(event, ...args) {
+    let currentArgs = args;
+
+    for (const middleware of this.middlewares) {
+      let called = false;
+
+      middleware(event, currentArgs, (newArgs) => {
+        called = true;
+        currentArgs = newArgs ?? currentArgs;
+      });
+
+      if (!called) {
+        return;
+      }
+    }
+
     if (!this.events.has(event)) {
       return;
     }
@@ -39,8 +57,29 @@ class EventEmitter {
     const listeners = this.events.get(event);
 
     listeners.forEach((callback) => {
-      callback(...args);
+      callback(...currentArgs);
     });
+  }
+
+  /**
+   * Register a middleware function that runs before the listeners of every
+   * emitted event.
+   *
+   * @param {Function} middleware Called as middleware(event, args, next).
+   *   Call next() to continue, next(newArgs) to continue with different
+   *   arguments, or skip the call to stop the event.
+   * @returns {Function} Call it to remove the middleware.
+   */
+  use(middleware) {
+    if (typeof middleware !== 'function') {
+      throw new TypeError('EventEmitter.use: middleware must be a function');
+    }
+
+    this.middlewares.push(middleware);
+
+    return () => {
+      this.middlewares = this.middlewares.filter((fn) => fn !== middleware);
+    };
   }
 
   /**

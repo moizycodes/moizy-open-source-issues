@@ -74,3 +74,82 @@ test('EventEmitter.clear removes the listeners of one event or of all events', (
 
   assert.equal(emitter.listeners('message').length, 0);
 });
+
+test('EventEmitter rejects listeners and middleware that are not functions', () => {
+  const emitter = new EventEmitter();
+
+  assert.throws(() => emitter.on('message', 'not a function'), TypeError);
+  assert.throws(() => emitter.once('message', null), TypeError);
+  assert.throws(() => emitter.use({}), TypeError);
+});
+
+test('EventEmitter runs middleware before listeners, in the order it was added', () => {
+  const emitter = new EventEmitter();
+  const order = [];
+
+  emitter.use((event, args, next) => {
+    order.push(`first:${event}`);
+    next();
+  });
+  emitter.use((event, args, next) => {
+    order.push(`second:${event}`);
+    next();
+  });
+  emitter.on('message', () => order.push('listener'));
+
+  emitter.emit('message');
+
+  assert.deepEqual(order, ['first:message', 'second:message', 'listener']);
+});
+
+test('EventEmitter middleware can replace the arguments listeners receive', (t) => {
+  const emitter = new EventEmitter();
+  const listener = t.mock.fn();
+
+  emitter.use((event, args, next) => next(args.map((arg) => arg.toUpperCase())));
+  emitter.on('message', listener);
+  emitter.emit('message', 'hello', 'world');
+
+  assert.deepEqual(listener.mock.calls[0].arguments, ['HELLO', 'WORLD']);
+});
+
+test('EventEmitter middleware stops an event by not calling next', (t) => {
+  const emitter = new EventEmitter();
+  const listener = t.mock.fn();
+  const laterMiddleware = t.mock.fn();
+
+  emitter.use((event, args, next) => {
+    if (event !== 'blocked') next();
+  });
+  emitter.use(laterMiddleware);
+  emitter.on('blocked', listener);
+  emitter.emit('blocked');
+
+  assert.equal(laterMiddleware.mock.callCount(), 0);
+  assert.equal(listener.mock.callCount(), 0);
+});
+
+test('EventEmitter middleware runs for events that have no listeners', (t) => {
+  const emitter = new EventEmitter();
+  const middleware = t.mock.fn((event, args, next) => next());
+
+  emitter.use(middleware);
+  emitter.emit('unknown-event', 1);
+
+  assert.equal(middleware.mock.callCount(), 1);
+  assert.deepEqual(middleware.mock.calls[0].arguments.slice(0, 2), ['unknown-event', [1]]);
+});
+
+test('EventEmitter.use returns a function that removes the middleware', (t) => {
+  const emitter = new EventEmitter();
+  const middleware = t.mock.fn((event, args, next) => next());
+  const listener = t.mock.fn();
+
+  const remove = emitter.use(middleware);
+  emitter.on('message', listener);
+  remove();
+  emitter.emit('message');
+
+  assert.equal(middleware.mock.callCount(), 0);
+  assert.equal(listener.mock.callCount(), 1);
+});

@@ -13,6 +13,7 @@ A beginner-friendly EventEmitter utility built with vanilla JavaScript. It allow
 - Register one-time listeners using `once()`
 - View listeners for an event
 - Clear listeners for one event or all events
+- Run middleware before listeners with `use()`
 - Handles unknown events safely
 - Handles removing non-existing listeners safely
 - Validates callback input
@@ -107,6 +108,33 @@ The listener runs only once.
 
 ---
 
+## Middleware
+
+Middleware runs before the listeners of every emitted event. It receives the event name, the arguments, and a `next` function.
+
+```javascript
+const removeLogger = emitter.use((event, args, next) => {
+  console.log(`Event: ${event}`);
+  next();
+});
+
+// Change the arguments that listeners receive
+emitter.use((event, args, next) => {
+  next(args.map((arg) => String(arg).trim()));
+});
+
+// Stop an event by not calling next()
+emitter.use((event, args, next) => {
+  if (event !== 'blocked') {
+    next();
+  }
+});
+
+removeLogger();
+```
+
+---
+
 ## Available Methods
 
 ### on(event, callback)
@@ -133,6 +161,10 @@ Returns all listeners registered for an event.
 
 Clears listeners for a specific event. If no event is provided, all listeners are cleared.
 
+### use(middleware)
+
+Registers a middleware function called as `middleware(event, args, next)` before the listeners of every event. Returns a function that removes the middleware.
+
 ---
 
 ## Edge Cases Handled
@@ -153,7 +185,7 @@ Clears listeners for a specific event. If no event is provided, all listeners ar
 Run:
 
 ```bash
-node event-emitter/tests/eventEmitter.test.js
+node --test event-emitter/tests/eventEmitter.test.js
 ```
 
 ---
