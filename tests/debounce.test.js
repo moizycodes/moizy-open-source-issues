@@ -61,3 +61,30 @@ test("debounce forwards arguments correctly", (t) => {
 
   assert.equal(received, 5);
 });
+
+test("debounce cancel() drops the pending call", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let count = 0;
+  const increment = () => count++;
+  const debounced = debounce(increment, 300);
+
+  debounced();
+  debounced.cancel();
+  t.mock.timers.tick(300);
+
+  assert.equal(count, 0);
+});
+
+test("debounce can be called again after cancel()", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let count = 0;
+  const increment = () => count++;
+  const debounced = debounce(increment, 300);
+
+  debounced();
+  debounced.cancel();
+  debounced();
+  t.mock.timers.tick(300);
+
+  assert.equal(count, 1);
+});
