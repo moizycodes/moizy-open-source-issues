@@ -1,4 +1,4 @@
-const TaskQueue = require('../core/TaskQueue');
+const TaskQueue = require('../utils/TaskQueue');
 
 const queue = new TaskQueue();
 

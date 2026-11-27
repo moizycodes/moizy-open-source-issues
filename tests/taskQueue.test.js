@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const TaskQueue = require('../core/TaskQueue');
+const TaskQueue = require('../utils/TaskQueue');
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
