@@ -1,151 +1,124 @@
 'use strict';
 
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
 const retry = require('../utils/retry');
-const { test, assertEquals, printSummary } = require('./test-utils.js');
+
+// Runs every wait straight away and records how long it asked for, so the
+// tests check the requested delays instead of measuring real elapsed time.
+const recordDelays = (t) => {
+  const delays = [];
+  const realSetTimeout = global.setTimeout;
+  t.mock.method(global, 'setTimeout', (callback, ms) => {
+    delays.push(ms);
+    return realSetTimeout(callback, 0);
+  });
+  return delays;
+};
 
 // 1. Function succeeds on first attempt
-test('succeeds on first attempt', async () => {
+test('succeeds on first attempt', async (t) => {
+  const delays = recordDelays(t);
   const fn = async () => 'done';
-  const result = await retry(fn);
-  assertEquals(result, 'done');
+
+  assert.equal(await retry(fn), 'done');
+  assert.deepEqual(delays, []);
 });
 
 // 2. Function succeeds after retries
-test('succeeds after retries', async () => {
+test('succeeds after retries', async (t) => {
+  recordDelays(t);
   let attempts = 0;
   const fn = async () => {
     attempts++;
     if (attempts < 3) {
-      throw new Error("fail");
+      throw new Error('fail');
     }
-    return "success";
+    return 'success';
   };
 
-  const result = await retry(fn, { retries: 3, delay: 10, factor: 2 });
-  assertEquals(result, "success");
+  assert.equal(await retry(fn, { retries: 3, delay: 10, factor: 2 }), 'success');
+  assert.equal(attempts, 3);
 });
 
 // 3. Maximum retries reached
-test('maximum retries reached', async () => {
+test('maximum retries reached', async (t) => {
+  recordDelays(t);
   const fn = async () => {
-    throw new Error("always fails");
+    throw new Error('always fails');
   };
 
-  let didThrow = false;
-
-  try {
-    await retry(fn, { retries: 2, delay: 10 });
-  } catch (error) {
-    didThrow = true;
-  }
-
-  assertEquals(didThrow, true);
+  await assert.rejects(retry(fn, { retries: 2, delay: 10 }), { message: 'always fails' });
 });
 
 // 4. Custom retry count
-test('custom retry count', async () => {
+test('custom retry count', async (t) => {
+  recordDelays(t);
   let callCount = 0;
   const fn = async () => {
     callCount++;
-    throw new Error("always fails");
+    throw new Error('always fails');
   };
 
-  try {
-    await retry(fn, { retries: 5, delay: 10 });
-  } catch (error) {
-    // expected
-  }
-
-  assertEquals(callCount, 6);
+  await assert.rejects(retry(fn, { retries: 5, delay: 10 }));
+  assert.equal(callCount, 6);
 });
 
 // 5. Custom delay
-test('custom delay is respected', async () => {
+test('custom delay is respected', async (t) => {
+  const delays = recordDelays(t);
   let attempts = 0;
   const fn = async () => {
     attempts++;
     if (attempts < 2) {
-      throw new Error("fail");
+      throw new Error('fail');
     }
-    return "ok";
+    return 'ok';
   };
 
-  const start = Date.now();
-  await retry(fn, { retries: 3, delay: 100, factor: 1 }); // factor 1 = no growth, easy to check
-  const elapsed = Date.now() - start;
+  await retry(fn, { retries: 3, delay: 100, factor: 1 });
 
-  // 1 failure means exactly one wait of ~100ms happened.
-  // Allow some slack (timers aren't perfectly precise).
-  assertEquals(elapsed >= 90, true);
+  // One failure means exactly one wait.
+  assert.deepEqual(delays, [100]);
 });
 
 // 6. Exponential delay calculation
-test('delay grows exponentially', async () => {
-  const delays = [];
+test('delay grows exponentially', async (t) => {
+  const delays = recordDelays(t);
   let attempts = 0;
-  let lastCallTime = Date.now();
-
   const fn = async () => {
-    const now = Date.now();
-    if (attempts > 0) {
-      delays.push(now - lastCallTime);
-    }
-    lastCallTime = now;
     attempts++;
     if (attempts < 4) {
-      throw new Error("fail");
+      throw new Error('fail');
     }
-    return "ok";
+    return 'ok';
   };
 
   await retry(fn, { retries: 3, delay: 50, factor: 2 });
 
-  // Expect roughly 50ms, 100ms, 200ms between calls (with slack for timer imprecision)
-  assertEquals(delays.length, 3);
-  assertEquals(delays[0] >= 40 && delays[0] < 80, true);
-  assertEquals(delays[1] >= 90 && delays[1] < 160, true);
-  assertEquals(delays[2] >= 180 && delays[2] < 300, true);
+  assert.deepEqual(delays, [50, 100, 200]);
 });
 
-// 7. Invalid options (e.g. negative retries shouldn't crash unexpectedly)
+// 7. Invalid options (e.g. null shouldn't crash unexpectedly)
 test('invalid options do not crash unexpectedly', async () => {
   const fn = async () => 'ok';
-  // options as garbage — retry should still work using defaults or handle gracefully
-  const result = await retry(fn, null);
-  assertEquals(result, 'ok');
+
+  assert.equal(await retry(fn, null), 'ok');
 });
 
 // 8. Non-function input
 test('non-function input throws TypeError', async () => {
-  let didThrow = false;
-  let errorType = '';
-
-  try {
-    await retry(null);
-  } catch (error) {
-    didThrow = true;
-    errorType = error.constructor.name;
-  }
-
-  assertEquals(didThrow, true);
-  assertEquals(errorType, 'TypeError');
+  await assert.rejects(retry(null), TypeError);
 });
 
 // 9. Error propagation after final retry
-test('propagates the original error after final retry', async () => {
+test('propagates the original error after final retry', async (t) => {
+  recordDelays(t);
+  const original = new Error('specific failure message');
   const fn = async () => {
-    throw new Error("specific failure message");
+    throw original;
   };
 
-  let caughtMessage = '';
-
-  try {
-    await retry(fn, { retries: 1, delay: 10 });
-  } catch (error) {
-    caughtMessage = error.message;
-  }
-
-  assertEquals(caughtMessage, "specific failure message");
+  await assert.rejects(retry(fn, { retries: 1, delay: 10 }), (error) => error === original);
 });
-
-printSummary();
