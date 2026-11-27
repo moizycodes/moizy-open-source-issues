@@ -19,36 +19,42 @@ Thank you for your interest in contributing! This guide will help you understand
 ## How to Contribute
 
 1. **Find an Issue**  
-   Go to the [Issues](https://github.com/AbdulMoeez1278/moizy-open-source-issues/issues) tab and pick an open issue that interests you.
+   Go to the [Issues](https://github.com/moizycodes/moizy-open-source-issues/issues) tab and pick an open issue that interests you.
 
 2. **Claim the Issue**  
+   Comment on the issue:
 
-   Comment on the issue:  
-    ```bash
+   ```text
    I would like to work on this issue.
+   ```
 
-- Wait for confirmation before starting.
+   Wait for confirmation before starting.
 
 3. **Fork the Repository**  
-Click **Fork** in the top-right corner of the repo.
+   Click **Fork** in the top-right corner of the repo.
 
 4. **Create a Branch**  
-Always work on a separate branch for each issue:  
-    ```bash
-    git checkout -b issue-<issue-number>-short-description
+   Always work on a separate branch for each issue:
 
-5. Make Changes and Commit
+   ```bash
+   git checkout -b issue-<issue-number>-short-description
+   ```
 
-- Write clean, readable, and well-commented code.
-- Commit with a clear message:
-  ```bash
-  git commit -m "fix: add email validation function"
+5. **Make Changes and Commit**
+   - Write clean, readable, and well-commented code.
+   - Commit with a clear message:
 
-6. Push and Create PR
-    ```bash
-    git push origin issue-<issue-number>-short-description
+   ```bash
+   git commit -m "fix: add email validation function"
+   ```
 
-Open a Pull Request referencing the issue.
+6. **Push and Create PR**
+
+   ```bash
+   git push origin issue-<issue-number>-short-description
+   ```
+
+   Open a Pull Request referencing the issue.
 
 ---
 
@@ -72,9 +78,11 @@ Open a Pull Request referencing the issue.
 ## Pull Request Guidelines
 
 - Reference the issue number in PR description:
-  ```bash
+
+  ```text
   Closes #<issue-number>
-  
+  ```
+
 - Provide a clear description of what the PR does.
 - Ensure `npm test` passes. GitHub Actions runs it on every PR.
 - Avoid unrelated changes in the PR.

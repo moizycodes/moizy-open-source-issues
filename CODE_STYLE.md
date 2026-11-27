@@ -37,8 +37,9 @@ Following these guidelines ensures consistency, readability, and maintainability
   function sum(a,b){
   return a+b
   }
-  
-Code Structure
+  ```
+
+### Code Structure
 
 - Keep functions short and focused
 - Group related functions together
@@ -55,7 +56,7 @@ Code Structure
 - Close all tags properly
 - Use meaningful IDs and classes
 
-   ```js
+  ```html
   <!-- Good -->
   <section class="user-profile">
     <h2>User Profile</h2>
@@ -63,9 +64,10 @@ Code Structure
 
   <!-- Bad -->
   <div id="div1"><h2>Profile</h2></div>
+  ```
 
-   ---
-   
+---
+
 ## 4. CSS / SCSS / Tailwind
 
 - Use kebab-case for class names → btn-primary, form-input
@@ -75,7 +77,7 @@ Code Structure
 - Use variables for colors, spacing, fonts (if using SCSS)
 - Prefer Tailwind classes for rapid prototyping, but keep readability
 
-   ```js
+  ```css
   /* Good */
   .btn-primary {
     background-color: #1d4ed8;
@@ -85,6 +87,7 @@ Code Structure
 
   /* Bad */
   .buttonBlue {color:white;background:blue;padding:5px 10px;}
+  ```
 
 ---
 
@@ -98,28 +101,31 @@ Code Structure
   - `style:` formatting, missing semi-colons, white-space
   - `refactor:` code change without adding feature/fixing bug
 
-   ```terminal command
+  ```bash
   git commit -m "feat: add email validation function"
+  ```
 
 ---
-   
+
 ## 6. Pull Requests
 
 - Each PR should focus on one issue.
 - Include a clear description of changes.
 - Reference the issue number it resolves:
 
-  ```terminal command
+  ```text
   Closes #<issue-number>
+  ```
 
-- Ensure code passes tests if applicable.
+- Ensure `npm test` passes.
 - Maintain readability and consistency.
 
 ---
 
-## 7. Testing (if applicable)
+## 7. Testing
 
-- Include example/test cases for functions.
+- Include test cases for functions in `tests/<name>.test.js`, written with `node:test` and `node:assert`.
+- Run all tests with `npm test`.
 - Keep tests small and focused.
 - Name tests clearly → `validateEmail returns true for valid email`.
 
