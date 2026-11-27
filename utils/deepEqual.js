@@ -75,6 +75,8 @@ function compareObjects(a, b) {
       return false;
     }
   }
+
+  return true;
 }
 
 module.exports = deepEqual;

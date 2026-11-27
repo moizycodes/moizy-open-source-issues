@@ -9,41 +9,42 @@ Use these badges in your `README.md` for a professional touch.
  - Show the build status of your project (if using GitHub Actions, Travis CI, or CircleCI):
 
    ```markdown
-   ![Build Status](https://img.shields.io/github/actions/workflow/status/AbdulMoeez1278/moizy-open-source-issues/main.yml?branch=main)
+   ![Build Status](https://img.shields.io/github/actions/workflow/status/moizycodes/moizy-open-source-issues/test.yml?branch=main)
+   ```
 
 2️⃣ Issues
 - Track open issues and encourage contribution:
 
-![Open Issues](https://img.shields.io/github/issues/AbdulMoeez1278/moizy-open-source-issues)
-![Closed Issues](https://img.shields.io/github/issues-closed/AbdulMoeez1278/moizy-open-source-issues)
+![Open Issues](https://img.shields.io/github/issues/moizycodes/moizy-open-source-issues)
+![Closed Issues](https://img.shields.io/github/issues-closed/moizycodes/moizy-open-source-issues)
 
 3️⃣ Pull Requests
 - Show contribution activity:
 
 
-![Open PRs](https://img.shields.io/github/issues-pr/AbdulMoeez1278/moizy-open-source-issues)
-![Merged PRs](https://img.shields.io/github/issues-pr-closed/AbdulMoeez1278/moizy-open-source-issues)
+![Open PRs](https://img.shields.io/github/issues-pr/moizycodes/moizy-open-source-issues)
+![Merged PRs](https://img.shields.io/github/issues-pr-closed/moizycodes/moizy-open-source-issues)
 
 4️⃣ License
 - Clearly indicate your repository’s license:
 
-![License](https://img.shields.io/github/license/AbdulMoeez1278/moizy-open-source-issues)
+![License](https://img.shields.io/github/license/moizycodes/moizy-open-source-issues)
 
 5️⃣ Contributors
 - Highlight active contributors to encourage collaboration:
 
-![Contributors](https://img.shields.io/github/contributors/AbdulMoeez1278/moizy-open-source-issues?color=blue)
+![Contributors](https://img.shields.io/github/contributors/moizycodes/moizy-open-source-issues?color=blue)
 
 6️⃣ Stars & Forks
 - Show popularity and community engagement:
 
-![Stars](https://img.shields.io/github/stars/AbdulMoeez1278/moizy-open-source-issues?style=social)
-![Forks](https://img.shields.io/github/forks/AbdulMoeez1278/moizy-open-source-issues?style=social)
+![Stars](https://img.shields.io/github/stars/moizycodes/moizy-open-source-issues?style=social)
+![Forks](https://img.shields.io/github/forks/moizycodes/moizy-open-source-issues?style=social)
 
 7️⃣ Language Stats
 - Display top languages used in the repo:
 
-![Languages](https://img.shields.io/github/languages/top/AbdulMoeez1278/moizy-open-source-issues)
+![Languages](https://img.shields.io/github/languages/top/moizycodes/moizy-open-source-issues)
 
 8️⃣ Professional Tip
 
@@ -55,7 +56,7 @@ Example Usage at the Top of README.md
 
 # moizy-open-source-issues 🚀
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/AbdulMoeez1278/moizy-open-source-issues/main.yml?branch=main)
-![Open Issues](https://img.shields.io/github/issues/AbdulMoeez1278/moizy-open-source-issues)
-![License](https://img.shields.io/github/license/AbdulMoeez1278/moizy-open-source-issues)
-![Contributors](https://img.shields.io/github/contributors/AbdulMoeez1278/moizy-open-source-issues?color=blue)
+![Build Status](https://img.shields.io/github/actions/workflow/status/moizycodes/moizy-open-source-issues/test.yml?branch=main)
+![Open Issues](https://img.shields.io/github/issues/moizycodes/moizy-open-source-issues)
+![License](https://img.shields.io/github/license/moizycodes/moizy-open-source-issues)
+![Contributors](https://img.shields.io/github/contributors/moizycodes/moizy-open-source-issues?color=blue)

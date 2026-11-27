@@ -1,5 +1,5 @@
-// src/services/apiServices.js
-const { NetworkError, ServerError, handleError } = require("../utils/errorHandler");
+// utils/apiService.js
+const { NetworkError, ServerError, handleError } = require("./errorHandler");
 
 const fetchData = async (url) => {
     try {

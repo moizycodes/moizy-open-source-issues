@@ -9,7 +9,7 @@
 function debounce(fn, delay) {
   let timer;
 
-  return function (...args) {
+  const debounced = function (...args) {
     const context = this;
 
     clearTimeout(timer);
@@ -18,6 +18,13 @@ function debounce(fn, delay) {
       fn.apply(context, args);
     }, delay);
   };
+
+  /**
+   * Cancels the pending call, if there is one.
+   */
+  debounced.cancel = () => clearTimeout(timer);
+
+  return debounced;
 }
 
 module.exports = debounce;

@@ -1,3 +1,6 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
 const pipe = require('../utils/pipe');
 
 const addOne = (value) => value + 1;
@@ -7,19 +10,25 @@ const trim = (value) => value.trim();
 const toUpperCase = (value) => value.toUpperCase();
 const addPrefix = (value) => `Mr. ${value}`;
 
-console.log(pipe(addOne, double)(5));
+test('pipe runs functions from left to right', () => {
+  assert.equal(pipe(addOne, double)(5), 12);
+  assert.equal(pipe(double, addOne)(5), 11);
+});
 
-console.log(pipe()(5));
+test('pipe returns the input unchanged when given no functions', () => {
+  assert.equal(pipe()(5), 5);
+});
 
-console.log(pipe(addOne)(5));
+test('pipe works with a single function', () => {
+  assert.equal(pipe(addOne)(5), 6);
+});
 
-console.log(pipe(addOne, double, toString)(5));
+test('pipe passes each result to the next function', () => {
+  assert.equal(pipe(addOne, double, toString)(5), '12');
+  assert.equal(pipe(addPrefix, toUpperCase, trim)('moeez'), 'MR. MOEEZ');
+  assert.equal(pipe((user) => user.name, toUpperCase)({ name: 'naveen' }), 'NAVEEN');
+});
 
-console.log(pipe(addPrefix, toUpperCase, trim)('moeez'));
-
-console.log(pipe(addOne, 'invalid', double)(5));
-
-console.log(pipe(
-  (user) => user.name,
-  toUpperCase
-)({ name: 'naveen' }));
+test('pipe skips values that are not functions', () => {
+  assert.equal(pipe(addOne, 'invalid', double)(5), 12);
+});

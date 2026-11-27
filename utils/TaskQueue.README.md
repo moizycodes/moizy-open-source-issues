@@ -24,7 +24,7 @@ Returns whether the queue is currently processing tasks.
 ## Example
 
 ```javascript
-const TaskQueue = require('./core/TaskQueue');
+const TaskQueue = require('./utils/TaskQueue');
 
 const queue = new TaskQueue();
 

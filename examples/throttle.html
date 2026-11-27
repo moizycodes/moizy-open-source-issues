@@ -7,8 +7,11 @@
 <body style="height: 300vh; font-family: Arial;">
   <h1>Scroll or resize and check the console</h1>
 
-  <script type="module">
-    import throttle from './utils/throttle.js';
+  <!-- utils/throttle.js is a CommonJS module, so give it a `module` object to export to. -->
+  <script>var module = {};</script>
+  <script src="../utils/throttle.js"></script>
+  <script>
+    const throttle = module.exports;
 
     const onScroll = throttle(() => {
       console.log('Throttled scroll at', new Date().toLocaleTimeString());

@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
-const normalizeCspReport = require("../src/utils/normalizeCspReport");
+const normalizeCspReport = require("../utils/normalizeCspReport");
 
 test("normalizes the complete legacy report from the issue example", () => {
   const report = {

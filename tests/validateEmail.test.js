@@ -1,27 +1,14 @@
 'use strict';
 
-const { validateEmail } = require('../src/validateEmail.js');
+const test = require('node:test');
+const assert = require('node:assert/strict');
 
-const test = (name, fn) => {
-  try {
-    fn();
-    console.log(`✔️ ${name}`);
-  } catch (err) {
-    console.error(`❌ ${name}`);
-    console.error('   ', err.message);
-  }
-};
+const { validateEmail } = require('../utils/validateEmail.js');
 
-const assertEquals = (actual, expected) => {
-  if (actual !== expected) {
-    throw new Error(`Expected ${expected}, got ${actual}`);
-  };
-};
-
-
-test('valid email returns true', () => assertEquals(validateEmail('test@yahoo.com'), true));
-
+test('valid email returns true', () => {
+  assert.equal(validateEmail('test@yahoo.com'), true);
+});
 
 test('invalid email returns false', () => {
-  assertEquals(validateEmail('abc.com'), false);
+  assert.equal(validateEmail('abc.com'), false);
 });

@@ -1,3 +1,6 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
 const get = require('../utils/get');
 
 const user = {
@@ -10,34 +13,46 @@ const user = {
   }
 };
 
-console.log(get(user, 'profile.address.city'));
+test('get reads a nested value from a dot-separated path', () => {
+  assert.equal(get(user, 'profile.address.city'), 'Lahore');
+  assert.equal(get(user, 'profile.age'), 22);
+});
 
-console.log(get(user, 'profile.age'));
+test('get reads a nested value from an array path', () => {
+  assert.equal(get(user, ['profile', 'address', 'city']), 'Lahore');
+});
 
-console.log(get(user, 'profile.active'));
+test('get returns falsy values instead of the default', () => {
+  assert.equal(get(user, 'profile.active', 'default'), false);
+});
 
-console.log(get(user, 'profile.missing', 'default'));
+test('get returns the default value for a missing path', () => {
+  assert.equal(get(user, 'profile.missing', 'default'), 'default');
+  assert.equal(get({}, 'a.b.c', 'default'), 'default');
+});
 
-console.log(get(user, ['profile', 'address', 'city']));
+test('get returns undefined for a missing path when no default is given', () => {
+  assert.equal(get(user, 'profile.address.country'), undefined);
+});
 
-console.log(get(null, 'profile.address.city', 'not found'));
+test('get returns the default value when the object is null or undefined', () => {
+  assert.equal(get(null, 'profile.address.city', 'not found'), 'not found');
+  assert.equal(get(undefined, 'profile.address.city', 'not found'), 'not found');
+});
 
-console.log(get(undefined, 'profile.address.city', 'not found'));
+test('get returns the default value for an empty or invalid path', () => {
+  assert.equal(get(user, '', 'empty path'), 'empty path');
+  assert.equal(get(user, null, 'invalid path'), 'invalid path');
+});
 
-console.log(get({}, 'a.b.c', 'default'));
+test('get does not mutate the input object', () => {
+  const originalUser = {
+    profile: {
+      name: 'Naveen'
+    }
+  };
 
-console.log(get(user, '', 'empty path'));
+  get(originalUser, 'profile.name');
 
-console.log(get(user, null, 'invalid path'));
-
-console.log(get(user, 'profile.address.country'));
-
-const originalUser = {
-  profile: {
-    name: 'Naveen'
-  }
-};
-
-get(originalUser, 'profile.name');
-
-console.log(originalUser);
+  assert.deepEqual(originalUser, { profile: { name: 'Naveen' } });
+});

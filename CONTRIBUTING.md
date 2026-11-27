@@ -10,44 +10,51 @@ Thank you for your interest in contributing! This guide will help you understand
 3. [Issue Guidelines](#issue-guidelines)
 4. [Pull Request Guidelines](#pull-request-guidelines)
 5. [Code Style](#code-style)
-6. [Community Guidelines](#community-guidelines)
-7. [Getting Help](#getting-help)
+6. [Testing](#testing)
+7. [Community Guidelines](#community-guidelines)
+8. [Getting Help](#getting-help)
 
 ---
 
 ## How to Contribute
 
 1. **Find an Issue**  
-   Go to the [Issues](https://github.com/AbdulMoeez1278/moizy-open-source-issues/issues) tab and pick an open issue that interests you.
+   Go to the [Issues](https://github.com/moizycodes/moizy-open-source-issues/issues) tab and pick an open issue that interests you.
 
 2. **Claim the Issue**  
+   Comment on the issue:
 
-   Comment on the issue:  
-    ```bash
+   ```text
    I would like to work on this issue.
+   ```
 
-- Wait for confirmation before starting.
+   Wait for confirmation before starting.
 
 3. **Fork the Repository**  
-Click **Fork** in the top-right corner of the repo.
+   Click **Fork** in the top-right corner of the repo.
 
 4. **Create a Branch**  
-Always work on a separate branch for each issue:  
-    ```bash
-    git checkout -b issue-<issue-number>-short-description
+   Always work on a separate branch for each issue:
 
-5. Make Changes and Commit
+   ```bash
+   git checkout -b issue-<issue-number>-short-description
+   ```
 
-- Write clean, readable, and well-commented code.
-- Commit with a clear message:
-  ```bash
-  git commit -m "fix: add email validation function"
+5. **Make Changes and Commit**
+   - Write clean, readable, and well-commented code.
+   - Commit with a clear message:
 
-6. Push and Create PR
-    ```bash
-    git push origin issue-<issue-number>-short-description
+   ```bash
+   git commit -m "fix: add email validation function"
+   ```
 
-Open a Pull Request referencing the issue.
+6. **Push and Create PR**
+
+   ```bash
+   git push origin issue-<issue-number>-short-description
+   ```
+
+   Open a Pull Request referencing the issue.
 
 ---
 
@@ -71,11 +78,13 @@ Open a Pull Request referencing the issue.
 ## Pull Request Guidelines
 
 - Reference the issue number in PR description:
-  ```bash
+
+  ```text
   Closes #<issue-number>
-  
+  ```
+
 - Provide a clear description of what the PR does.
-- Ensure the PR passes all tests (if any).
+- Ensure `npm test` passes. GitHub Actions runs it on every PR.
 - Avoid unrelated changes in the PR.
 - Wait for review and respond politely to feedback.
 
@@ -87,6 +96,35 @@ Open a Pull Request referencing the issue.
 - Use descriptive variable and function names.
 - Comment complex logic for clarity.
 - Avoid unnecessary code duplication.
+
+---
+
+## Testing
+
+Tests need Node.js 22 or newer and no dependencies. Run all of them from the repository root:
+
+```bash
+npm test
+```
+
+Run a single file with `node --test tests/chunk.test.js`.
+
+When you add or change a utility:
+
+- Put its tests in `tests/<utilityName>.test.js` (or `<project>/tests/<name>.test.js` for a mini-project). Only files ending in `.test.js` are picked up.
+- Write them with Node's built-in [`node:test`](https://nodejs.org/api/test.html) and `node:assert/strict`. Do not use Jest or other test libraries.
+- Assert on results. A test that only prints with `console.log` can never fail.
+
+```js
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
+const chunk = require('../utils/chunk');
+
+test('chunk splits an array into groups of the given size', () => {
+  assert.deepEqual(chunk([1, 2, 3, 4], 2), [[1, 2], [3, 4]]);
+});
+```
 
 ---
 

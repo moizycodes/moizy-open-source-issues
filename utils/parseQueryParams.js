@@ -14,7 +14,7 @@
  * parseQueryParams(null);                 // {}
  */
 
-export function parseQueryParams(query) {
+function parseQueryParams(query) {
   if (!query || typeof query !== 'string') return {};
 
   const params = new URLSearchParams(query);
@@ -27,3 +27,5 @@ export function parseQueryParams(query) {
 
   return result;
 }
+
+module.exports = parseQueryParams;

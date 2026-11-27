@@ -14,7 +14,7 @@
  * limitedFn(); // allowed
  * limitedFn(); // throws Error('Rate limit exceeded')
  */
-export function rateLimit(fn, config) {
+function rateLimit(fn, config) {
   if (typeof fn !== 'function') {
     throw new TypeError('rateLimit: first argument must be a function');
   }
@@ -53,3 +53,5 @@ export function rateLimit(fn, config) {
     return fn.apply(this, args);
   };
 }
+
+module.exports = rateLimit;

@@ -30,7 +30,7 @@ async function checkBrokenLinks(urls) {
             result.push({
                 url: url,
                 statusCode: res.status,
-                status: res.status === 200 ? "valid" : "Broken"
+                status: res.status === 200 ? "valid" : "broken"
             });
         } catch {
           result.push({

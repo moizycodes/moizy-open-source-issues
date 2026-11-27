@@ -1,42 +1,87 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+
 const Cache = require('../Cache');
 
-const cache = new Cache();
+test('Cache stores and retrieves values', () => {
+  const cache = new Cache();
 
-cache.set('user', {
-  id: 1,
-  name: 'Moeez'
+  cache.set('user', { id: 1, name: 'Moeez' });
+
+  assert.deepEqual(cache.get('user'), { id: 1, name: 'Moeez' });
+  assert.equal(cache.has('user'), true);
 });
 
-console.log(cache.get('user'));
+test('Cache returns undefined for a missing key', () => {
+  const cache = new Cache();
 
-console.log(cache.has('user'));
+  assert.equal(cache.get('missing'), undefined);
+  assert.equal(cache.has('missing'), false);
+});
 
-cache.delete('user');
+test('Cache deletes a single item', () => {
+  const cache = new Cache();
+  cache.set('user', { id: 1 });
 
-console.log(cache.get('user'));
+  assert.equal(cache.delete('user'), true);
+  assert.equal(cache.get('user'), undefined);
+  assert.equal(cache.delete('user'), false);
+});
 
-cache.set('key1', 'value1');
-cache.set('key2', 'value2');
+test('Cache reports its size and clears all items', () => {
+  const cache = new Cache();
+  cache.set('key1', 'value1');
+  cache.set('key2', 'value2');
 
-console.log(cache.size());
+  assert.equal(cache.size(), 2);
 
-cache.clear();
+  cache.clear();
 
-console.log(cache.size());
+  assert.equal(cache.size(), 0);
+});
 
-cache.set('token', 'abc123', 500);
+test('Cache expires an item once its TTL has passed', (t) => {
+  t.mock.timers.enable({ apis: ['Date'], now: 1000 });
+  const cache = new Cache();
+  cache.set('token', 'abc123', 500);
 
-setTimeout(() => {
-  console.log(cache.get('token'));
-  console.log(cache.has('token'));
-}, 600);
+  t.mock.timers.tick(500);
+  assert.equal(cache.get('token'), 'abc123');
+  assert.equal(cache.has('token'), true);
 
-cache.set('emptyValue', undefined);
+  t.mock.timers.tick(1);
+  assert.equal(cache.get('token'), undefined);
+  assert.equal(cache.has('token'), false);
+});
 
-console.log(cache.has('emptyValue'));
-console.log(cache.get('emptyValue'));
+test('Cache does not count expired items in its size', (t) => {
+  t.mock.timers.enable({ apis: ['Date'], now: 1000 });
+  const cache = new Cache();
+  cache.set('short', 'value', 100);
+  cache.set('permanent', 'value');
 
-cache.set('nullValue', null);
+  t.mock.timers.tick(101);
 
-console.log(cache.has('nullValue'));
-console.log(cache.get('nullValue'));
+  assert.equal(cache.size(), 1);
+});
+
+test('Cache keeps items without a TTL until they are deleted', (t) => {
+  t.mock.timers.enable({ apis: ['Date'], now: 1000 });
+  const cache = new Cache();
+  cache.set('permanent', 'value');
+
+  t.mock.timers.tick(1000000);
+
+  assert.equal(cache.get('permanent'), 'value');
+});
+
+test('Cache stores undefined and null values', () => {
+  const cache = new Cache();
+  cache.set('emptyValue', undefined);
+  cache.set('nullValue', null);
+
+  assert.equal(cache.has('emptyValue'), true);
+  assert.equal(cache.get('emptyValue'), undefined);
+  assert.equal(cache.has('nullValue'), true);
+  assert.equal(cache.get('nullValue'), null);
+});

@@ -23,7 +23,13 @@ function groupBy(array, keyOrFn) {
     const normalizedKey = String(groupKey);
 
     if (!Object.prototype.hasOwnProperty.call(result, normalizedKey)) {
-      result[normalizedKey] = [];
+      // defineProperty keeps a '__proto__' group as a normal key instead of replacing the result's prototype.
+      Object.defineProperty(result, normalizedKey, {
+        value: [],
+        writable: true,
+        enumerable: true,
+        configurable: true
+      });
     }
 
     result[normalizedKey].push(item);

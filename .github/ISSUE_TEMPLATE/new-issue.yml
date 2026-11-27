@@ -1,21 +1,22 @@
 name: "💡 New Issue"
 description: "Use this template to submit a bug, feature request, or enhancement."
 title: "[ISSUE] "
-labels: "help wanted"
-assignees: ""
+labels: ["help wanted"]
 
 body:
   - type: markdown
     attributes:
       value: |
         ## 🎯 Goal
-        <!-- Describe the purpose of this issue. What problem does it solve? -->
+        Describe the purpose of this issue and the problem it solves.
 
   - type: textarea
     id: description
     attributes:
       label: "Detailed Description"
       description: "Explain the issue, feature request, or enhancement in detail."
+    validations:
+      required: true
 
   - type: textarea
     id: steps
@@ -50,10 +51,3 @@ body:
     attributes:
       label: "Additional Information"
       description: "Any other relevant info, screenshots, or references."
-      
-Features of this template:
-
-- Structured for bugs, feature requests, or enhancements.
-- Includes steps, expected vs actual behavior for bug reports.
-- Includes difficulty level to help contributors pick issues.
-- Encourages clear, detailed descriptions.

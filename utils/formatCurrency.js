@@ -10,7 +10,7 @@
  * @returns {string | null} - The formatted string, "0.00" for invalid input, or null for non-finite values (Infinity, -Infinity)
  */
 
-export function formatCurrency(amount, options = {}) {
+function formatCurrency(amount, options = {}) {
   const { currency, decimals = 2, locale } = options;
 
   const isCurrency = typeof currency === 'string' && currency.length > 0;
@@ -34,3 +34,5 @@ export function formatCurrency(amount, options = {}) {
     }).format(amount);
   }
 }
+
+module.exports = formatCurrency;

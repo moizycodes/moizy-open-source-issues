@@ -11,7 +11,7 @@
  * safeJSONParse("invalid")
  * // { data: null, error: "Invalid JSON" }
  */
-export function safeJSONParse(jsonString) {
+function safeJSONParse(jsonString) {
   try {
     if (typeof jsonString !== "string") {
       return { data: null, error: "Input must be a string" };
@@ -34,3 +34,5 @@ export function safeJSONParse(jsonString) {
     };
   }
 }
+
+module.exports = safeJSONParse;

@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const validatePaginationResponse = require('../src/utils/validatePaginationResponse');
+const validatePaginationResponse = require('../utils/validatePaginationResponse');
 
 const makeResponse = ({ dataLength = 20, ...pagination } = {}) => ({
   data: Array.from({ length: dataLength }, (_, index) => ({ id: index + 1 })),
